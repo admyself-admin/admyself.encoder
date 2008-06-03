@@ -8,10 +8,15 @@
 #secret_access_key - Amazon s3 secret access key
 #bucket_name - s3's Bucket Name 
 #s3server_url - amazon s3 server url
+#action_path - Exact url of available files
+
+#log - Logger info file path
+#temp_file_path - its a temp directory for the temporary convertion files are stored, before encode/upload to s3
 #tvc_path - total video converter executable path.  Its used to convert the downloaded files to flv
 #flv_ini_file_path - total video converter ini file path
 
-#temp_file_path - its a temp directory for the temporary convertion files are stored, before upload to s3
+#curl_path - curl executable path. It is used to download and upload files
+#recipients - Recipients mail address for Exception information
 
 --- 
 
@@ -38,4 +43,3 @@ tvc_path: c:/Program Files/Total Video Converter/tvc
 
 curl_path: c:/curl-7.18.0
 recipients: shivsingh@railsfactory.org , saravanankrishnan@railsfactory.org
-

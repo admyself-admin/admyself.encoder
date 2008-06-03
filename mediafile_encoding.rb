@@ -16,11 +16,10 @@ class MediafileEncoding
     db_name=$settings["db_name"]
     db_port=$settings["db_port"]          
     $log.write("\nEstablishing connection with Mysql...\n")
-    begin					
-      #puts "#{db_host}, #{db_username}, #{db_password}, #{db_name}, #{db_port}"
+    begin      
       $log.write("Connecting to MySQL database server\n")
       $dbh = Mysql.connect(db_host, db_username, db_password, db_name, db_port)
-      $log.write("successfully connected\n")
+      $log.write("successfully connected to MySQL server\n")
       $log.write("\n#{'*'*50}Script started...#{Time.now}....#{'*'*50}\n")    
     rescue  Mysql::Error => e
       $log.write("Failed to connect MySQL database server\n")
@@ -46,7 +45,7 @@ class MediafileEncoding
     begin
       $log.write("Retrieving datas from Media File Table...\n")
       @result =$dbh.query("SELECT * FROM mediafiles WHERE (is_encoding = 0)")
-      puts @result.num_rows 
+      #puts @result.num_rows 
       $log.write("Success...\n")
       return @result
     rescue
@@ -60,9 +59,9 @@ class MediafileEncoding
     result.each_hash do |x| 	 
       $log.write("\nProcessing Media File ID: #{x['id']} ...\n")	
       $log.write("filename is #{x['filename']}...\n")      
-      temp_file = "#{$settings["temp_file_path"]}"+"/"+x['filename'].split(".").first+".flv"
-      puts temp_file
-      temp_path = "#{$settings["temp_file_path"]}"+"/"+x['filename']
+      temp_file = "#{$settings["temp_file_path"]}"+"\\\\"+x['filename'].split(".").first+".flv"
+      #puts temp_file
+      temp_path = "#{$settings["temp_file_path"]}"+"\\\\"+x['filename']
       #puts temp_path
       @file = x['filename'].split(".").first+".flv"
       #puts temp_file
@@ -77,22 +76,22 @@ class MediafileEncoding
 
         begin
           $log.write("\n Encoding downloaded files...")
-          #puts "#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"/"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality"
-          system("#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"/"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality")
+          puts "#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"\\\\"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality"
+          system("#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"\\\\"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality")
           $log.write("media file #{x['id']} encoded successfully...\n")
         rescue
            $log.write("\n\tEncode Error: Can't encode this media file #{x['filename']} \n\tReason:->\t#{" unknown "}\t<-:\n")
         end
 
        begin
-          $log.write("uploading encoded files...\n")
-          #system("curl http://digital-production.s3.amazonaws.com/mediafiles/2/abcd.jpg -T C:\curl-7.18.0\dft.jpg")
-          system("#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} -T #{temp_file}")
+          $log.write("uploading encoded files...\n")          
+          puts "#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename']} "
+          system("#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename']}")
           $log.write("\n Successfully uploaded...")
           @update_result = $dbh.query("update mediafiles set is_encoding = '1' where id=#{x['id']}")      
           $log.write("\n Status saved in database...")
-          FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
-          FileUtils.rm "#{temp_file}" if File.exists?("#{temp_file}")
+          #FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
+          #FileUtils.rm "#{temp_file}" if File.exists?("#{temp_file}")
         rescue
           $log.write("socket connection to the server was not read from or written to within the timeout period .Idle connections will be closed ...\n")
           $log.write("Encoded file #{x['filename']} is failed to upload ...\n Process Terminated for #{x['filename']} Media File ID: #{x['id']}...\n")
@@ -102,8 +101,11 @@ class MediafileEncoding
   
   def mail_error(error,reason) 
     email_addresses = $settings['recipients'].split(',')
+    begin
     email_addresses.each do |e|
       Emailer.deliver_test_email(e.strip,error,reason)
+    end
+    rescue
     end
  end # def ends
 end
