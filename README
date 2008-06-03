@@ -1,0 +1,59 @@
+
+Download, Encode and Upload Meadia Files
+========================================
+
+This is a standalone ruby program which downloads non encoded files 
+s3 server. And then these files are converted to flv files and again uploaded
+to s3 server.
+
+To use:
+  ruby mediafile_encoding.rb
+
+To change settings:
+
+  Edit and change values of variables in  /encoding/mediafile_encoding_settings.yml
+
+     Following are MYSQL settings in the device:
+	mysql_host:
+	db_username:
+	db_password: 
+	database:
+	port:
+    
+     s3 settings:
+	access_key_id:
+	secret_access_key:
+	s3server_url:
+	action_path:
+	s3path:
+	bucket:
+
+
+     Mention log file name with path location in device
+	log:
+
+     To set path where downloaded file should be stored : 
+	temp_file_path:
+
+     Total video converter exe file path
+        tvc_path:
+
+     Path of the total video converter flv ini file
+	flv_ini_file_path
+
+     Set path of curl program:
+	curl_path:
+
+     Mention list of emails seperated by comma, who would be mailed about the script's status and errors.
+	recipients:
+
+====
+  
+  This script downloads non encoded media files and converted it into flv files.Then the converted
+  files are uploaded into s3 server.
+
+  The script would skip to next task automatically, in case some error or enexpected action occures.
+
+  All the actions and their re-actions produced by this script is maintained in LOG, which can be examined later.
+
+  Mail is sent to the Recipients if error occurs and when script execution is over.
