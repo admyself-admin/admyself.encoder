@@ -3,7 +3,7 @@
   include AWS::S3
   require 'mysql'
   require 'yaml'
-  require '../mediafile/mail'
+  require 'mail'
 
 class MediafileEncoding
   $settings = YAML::load(File.open(File.dirname(__FILE__) + '/mediafile_encoding_settings.yml'))  
@@ -65,22 +65,11 @@ class MediafileEncoding
       temp_path = "#{$settings["temp_file_path"]}"+"/"+x['filename']
       #puts temp_path
       @file = x['filename'].split(".").first+".flv"
-      puts @file
       #puts temp_file
         begin
           $log.write("\nDownloading #{x['filename']} from s3...\n")          
-          #system("c:\\curl-7.18.0\\curl http://s3.amazonaws.com/digital-production/mediafiles/1/2_1.jpg > c:\\abc.jpg")
-          puts "##########"
-          puts "#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}"
-          puts "##########"
+          #system("c:\\curl-7.18.0\\curl http://s3.amazonaws.com/digital-production/mediafiles/1/2_1.jpg > c:\\abc.jpg")         
           system("#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}")
-         # return curl_response
-          #Net::HTTP.start("#{$settings['s3server_url']}") { |http|
-           # resp = http.get("#{$settings['action_path']}/#{x['id']}/#{x['filename']}")
-            #open(temp_path, "wb") { |file|
-             # file.write(resp.body)
-            #}
-          #}
           $log.write("media file #{x['filename']} downloaded...\n")
         rescue
           $log.write("\n s3 Error: Can't download #{$settings['s3path']}/#{x['id']}...\n\t Reason:->\t#{" unknown "}\t<-:\n")
@@ -88,8 +77,8 @@ class MediafileEncoding
 
         begin
           $log.write("\n Encoding downloaded files...")
-          encode = system("#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"\\\\"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality")        
-          return encode
+          #puts "#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"/"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality"
+          system("#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"/"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality")
           $log.write("media file #{x['id']} encoded successfully...\n")
         rescue
            $log.write("\n\tEncode Error: Can't encode this media file #{x['filename']} \n\tReason:->\t#{" unknown "}\t<-:\n")
@@ -97,17 +86,13 @@ class MediafileEncoding
 
        begin
           $log.write("uploading encoded files...\n")
-          upload = S3Object.store(
-                                "#{@file}",
-                                (temp_file ? File.open(temp_file) : temp_file),
-                                "#{$settings["bucket_name"]}",
-                                :content_type => true,
-                                :access => :public_read_write
-                                )
-          return upload
+          #system("curl http://digital-production.s3.amazonaws.com/mediafiles/2/abcd.jpg -T C:\curl-7.18.0\dft.jpg")
+          system("#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} -T #{temp_file}")
+          $log.write("\n Successfully uploaded...")
           @update_result = $dbh.query("update mediafiles set is_encoding = '1' where id=#{x['id']}")      
           $log.write("\n Status saved in database...")
-          #FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
+          FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
+          FileUtils.rm "#{temp_file}" if File.exists?("#{temp_file}")
         rescue
           $log.write("socket connection to the server was not read from or written to within the timeout period .Idle connections will be closed ...\n")
           $log.write("Encoded file #{x['filename']} is failed to upload ...\n Process Terminated for #{x['filename']} Media File ID: #{x['id']}...\n")
