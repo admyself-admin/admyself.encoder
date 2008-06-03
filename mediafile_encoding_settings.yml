@@ -37,7 +37,7 @@ bucket_name: digital-production
 
 
 log: d:/projects/encoding/log/encoding_log.txt
-temp_file_path: d:/projects/encoding/temp
+temp_file_path: D:\\Railsfactory\\encoder\\temp
 flv_ini_file_path: c:/Program Files/Total Video Converter/ini/flv.ini
 tvc_path: c:/Program Files/Total Video Converter/tvc
 
