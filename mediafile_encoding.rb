@@ -68,6 +68,9 @@ class MediafileEncoding
         begin
           $log.write("\nDownloading #{x['filename']} from s3...\n")          
           #system("c:\\curl-7.18.0\\curl http://s3.amazonaws.com/digital-production/mediafiles/1/2_1.jpg > c:\\abc.jpg")         
+          puts "++++++++++++++"
+          puts "#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}"
+          puts "++++++++++++++"
           system("#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}")
           $log.write("media file #{x['filename']} downloaded...\n")
         rescue
@@ -86,9 +89,9 @@ class MediafileEncoding
        begin
           $log.write("uploading encoded files...\n")          
           puts "#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename']} "
-          system("#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename']}")
+          #system("#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename']}")
           $log.write("\n Successfully uploaded...")
-          @update_result = $dbh.query("update mediafiles set is_encoding = '1' where id=#{x['id']}")      
+          #@update_result = $dbh.query("update mediafiles set is_encoding = '1' where id=#{x['id']}")      
           $log.write("\n Status saved in database...")
           #FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
           #FileUtils.rm "#{temp_file}" if File.exists?("#{temp_file}")
