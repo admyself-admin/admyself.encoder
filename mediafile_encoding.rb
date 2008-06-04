@@ -60,17 +60,11 @@ class MediafileEncoding
       $log.write("\nProcessing Media File ID: #{x['id']} ...\n")	
       $log.write("filename is #{x['filename']}...\n")      
       temp_file = "#{$settings["temp_file_path"]}"+"\\\\"+x['filename'].split(".").first+".flv"
-      #puts temp_file
       temp_path = "#{$settings["temp_file_path"]}"+"\\\\"+x['filename']
-      #puts temp_path
       @file = x['filename'].split(".").first+".flv"
-      #puts temp_file
         begin
           $log.write("\nDownloading #{x['filename']} from s3...\n")          
-          #system("c:\\curl-7.18.0\\curl http://s3.amazonaws.com/digital-production/mediafiles/1/2_1.jpg > c:\\abc.jpg")         
-          puts "++++++++++++++"
-          puts "#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}"
-          puts "++++++++++++++"
+          # "#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}"
           system("#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}")
           $log.write("media file #{x['filename']} downloaded...\n")
         rescue
@@ -88,10 +82,10 @@ class MediafileEncoding
 
        begin
           $log.write("uploading encoded files...\n")          
-          puts "#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename']} "
-          #system("#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename']}")
+          #puts "#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'} "
+          system("#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'}")
           $log.write("\n Successfully uploaded...")
-          #@update_result = $dbh.query("update mediafiles set is_encoding = '1' where id=#{x['id']}")      
+          @update_result = $dbh.query("update mediafiles set is_encoding = '1' where id=#{x['id']}")      
           $log.write("\n Status saved in database...")
           #FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
           #FileUtils.rm "#{temp_file}" if File.exists?("#{temp_file}")
