@@ -62,7 +62,7 @@ class MediafileEncoding
     result.each_hash do |x| 	 
       $log.write("\nProcessing Media File ID: #{x['id']} ...\n")	
       $log.write("filename is #{x['filename']}...\n")      
-      temp_file = "#{$settings["temp_file_path"]}"+"\\\\"+x['filename'].split(".").first+".flv"
+      #temp_file = "#{$settings["temp_file_path"]}"+"\\\\"+x['filename'].split(".").first+".flv"
       temp_path = "#{$settings["temp_file_path"]}"+"\\\\"+x['filename']
       @file = x['filename'].split(".").first+".flv"
         begin
@@ -78,8 +78,8 @@ class MediafileEncoding
 
         begin
           $log.write("\n Encoding downloaded files...")
-          puts "#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"\\\\"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality"
-          system("#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"\\\\"+"#{x['filename']} /o #{temp_file} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality")
+          puts "#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"\\\\"+"#{x['filename']} /o #{x['flv_filename']} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality"
+          system("#{$settings['tvc_path']} /f #{$settings["temp_file_path"]}"+"\\\\"+"#{x['filename']} /o #{x['flv_filename']} /pi #{$settings["flv_ini_file_path"]} /pn Flash video normal quality")
           $log.write("media file #{x['id']} encoded successfully...\n")
         rescue
            $log.write("\n\tEncode Error: Can't encode this media file #{x['filename']} \n\tReason:->\t#{" unknown "}\t<-:\n")
@@ -89,13 +89,13 @@ class MediafileEncoding
 
        begin
           $log.write("uploading encoded files...\n")          
-          #puts "#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'} "
-          system("#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'}")
+          #puts "#{$settings['curl_path']}/curl -T #{x['flv_filename']} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'} "
+          system("#{$settings['curl_path']}/curl -T #{x['flv_filename']} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'}")
           $log.write("\n Successfully uploaded...")
           @update_result = $dbh.query("update mediafiles set is_encoded = '1' where id=#{x['id']}")      
           $log.write("\n Status saved in database...")
           #FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
-          #FileUtils.rm "#{temp_file}" if File.exists?("#{temp_file}")
+          #FileUtils.rm "#{x['flv_filename']}" if File.exists?("#{x['flv_filename']}")
         rescue
           $log.write("socket connection to the server was not read from or written to within the timeout period .Idle connections will be closed ...\n")
           $log.write("Encoded file #{x['filename']} is failed to upload ...\n Process Terminated for #{x['filename']} Media File ID: #{x['id']}...\n")
