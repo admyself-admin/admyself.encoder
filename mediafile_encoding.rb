@@ -25,6 +25,8 @@ class MediafileEncoding
       $log.write("Failed to connect MySQL database server\n")
       $log.write("MysqlError: Can't Connect DB\n\tReason:-> Code:#{e.errno}\tMessage:#{e.error}\t")
       e.respond_to?("sqlstate") ? $log.write("SQLSTATE:#{e.sqlstate} <-:\n") : $log.write(" <-:\n")
+      mail_error("Mysql Connection Error", $! )
+      return
     end  #sql begin-rescue-end
   end
   
@@ -38,19 +40,20 @@ class MediafileEncoding
       $log.write("AWS S3 connection established successfully...\n")
     rescue
       $log.write("Failed To Connect AWS S3...")
+      mail_error("S3 Connection Error", $! )
+      return
     end  
   end
   
   def fetch_records
     begin
       $log.write("Retrieving datas from Media File Table...\n")
-      @result =$dbh.query("SELECT * FROM mediafiles WHERE (is_encoding = 0)")
-      #puts @result.num_rows 
-      $log.write("Success...\n")
-      return @result
+      @result =$dbh.query("SELECT * FROM mediafiles WHERE (is_encoded = 0)")
+      @result.num_rows > 0  ?  @result :  $log.write(" There is no file to be encoded \n")
     rescue
       $log.write("failed to fetch records from database...\n")
-      return false
+      mail_error("No Record Found", $! )
+      return 
     end
   end
 
@@ -68,7 +71,9 @@ class MediafileEncoding
           system("#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}")
           $log.write("media file #{x['filename']} downloaded...\n")
         rescue
-          $log.write("\n s3 Error: Can't download #{$settings['s3path']}/#{x['id']}...\n\t Reason:->\t#{" unknown "}\t<-:\n")
+          $log.write("\n Curl Error: Can't download #{$settings['s3path']}/#{x['id']}...\n\t Reason:->\t#{ $! }\t<-:\n")
+          mail_error("Curl Download Error", $! )
+          return
         end
 
         begin
@@ -78,6 +83,8 @@ class MediafileEncoding
           $log.write("media file #{x['id']} encoded successfully...\n")
         rescue
            $log.write("\n\tEncode Error: Can't encode this media file #{x['filename']} \n\tReason:->\t#{" unknown "}\t<-:\n")
+           mail_error("File Encode Error", $! )
+           return
         end
 
        begin
@@ -85,13 +92,15 @@ class MediafileEncoding
           #puts "#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'} "
           system("#{$settings['curl_path']}/curl -T #{temp_file} #{$settings['s3path']}/#{x['id']}/#{x['filename'].split('.').first+'.flv'}")
           $log.write("\n Successfully uploaded...")
-          @update_result = $dbh.query("update mediafiles set is_encoding = '1' where id=#{x['id']}")      
+          @update_result = $dbh.query("update mediafiles set is_encoded = '1' where id=#{x['id']}")      
           $log.write("\n Status saved in database...")
           #FileUtils.rm "#{$settings["temp_file_path"]}/#{x['filename']}" if File.exists?("#{$settings["temp_file_path"]}/#{x['filename']}")
           #FileUtils.rm "#{temp_file}" if File.exists?("#{temp_file}")
         rescue
           $log.write("socket connection to the server was not read from or written to within the timeout period .Idle connections will be closed ...\n")
           $log.write("Encoded file #{x['filename']} is failed to upload ...\n Process Terminated for #{x['filename']} Media File ID: #{x['id']}...\n")
+          mail_error("Curl Upload Error", $! )
+          return
         end
     end		
   end
@@ -103,14 +112,15 @@ class MediafileEncoding
       Emailer.deliver_test_email(e.strip,error,reason)
     end
     rescue
+     $log.write("Error while sending mail: \n Error : #{error} \n Reason : #{reason}")
     end
  end # def ends
 end
 
   obj = MediafileEncoding.new
-  obj.mysql_connect ? @fetch_records=obj.fetch_records : obj.mail_error("MysqlconnectionError")
-  if @fetch_records   
+  obj.mysql_connect ? @fetch_records=obj.fetch_records : obj.mail_error("MysqlconnectionError","Failed to connect MySQL database server")
+  if @fetch_records.num_rows > 0
     obj.encoding(@fetch_records) ? obj.mail_error("Task Completed","File Encoded and Uploaded Successfully") : obj.mail_error("S3FileError","socket connection to the server was not read from or written to within the timeout period .Idle connections will be closed") 
   else
-    obj.mail_error("Unable to fetch Records from database....Try Again Later")
+    obj.mail_error("No Records Found", "All files are already enocoded.")
   end
