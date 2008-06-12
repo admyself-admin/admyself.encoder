@@ -21,11 +21,11 @@
 --- 
 
 
-db_host: 127.0.0.1
-db_username: root
-db_password: 
-db_name: digital_development
-db_port:
+db_host: 70.87.222.99
+db_username: digital
+db_password: digital123
+db_name: digital_production
+db_port: 
 
 access_key_id: 1V2CH6DZ6FJMCTZ06TR2
 secret_access_key: 61SxYAOuwBAmX9SkZh2CStxo7MH1ODe8tRJdR+sH
@@ -36,10 +36,11 @@ s3path: http://s3.amazonaws.com/digital-production/mediafiles
 bucket_name: digital-production
 
 
-log: d:/projects/encoding/log/encoding_log.txt
-temp_file_path: D:\\projects\\encoding\\temp
-flv_ini_file_path: c:/Program Files/Total Video Converter/ini/flv.ini
+log: D:/Railsfactory/projects/encoder/log/encoding_log.txt
+temp_file_path: D:\\Railsfactory\\projects\\encoder\\temp
+flv_ini_file_path: c:\\Program Files\\Total Video Converter\\ini\\flv.ini
 tvc_path: c:/Program Files/Total Video Converter/tvc
 
 curl_path: c:/curl-7.18.0
 recipients: shivsingh@railsfactory.org , saravanankrishnan@railsfactory.org
+
