@@ -48,8 +48,9 @@ class MediafileEncoding
   def fetch_records
     begin
       $log.write("Retrieving datas from Media File Table...\n\n")
-      @result =$dbh.query("SELECT * FROM mediafiles WHERE (is_encoded = 0 && is_uploaded = 1 && encode_start_time is NULL) LIMIT 1")
+      @result =$dbh.query("SELECT * FROM mediafiles WHERE (is_encoded = 0 && is_uploaded = 1 && playerimage = 0 && encode_start_time is NULL) LIMIT 1")
       result =  @result.fetch_row
+      puts result.inspect
       if @result.num_rows > 0         
         $dbh.query("update mediafiles set encode_start_time='#{Time.now.to_s(:db)}' where id= '#{result[0]}'")  
         @result.data_seek(0)
@@ -130,7 +131,7 @@ class MediafileEncoding
       email_addresses.each do |e|
         Emailer.deliver_test_email(e.strip,error,reason)
       end
-      rescue
+     rescue
         $log.write("Error while sending mail: \n Error : #{error} \n Reason : #{reason}")
       end
     end # def ends

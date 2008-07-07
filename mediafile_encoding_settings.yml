@@ -25,7 +25,7 @@ db_host: 70.87.222.99
 db_username: digital
 db_password: digital123
 db_name: digital_production
-db_port: 
+db_port: 3306
 
 access_key_id: 1V2CH6DZ6FJMCTZ06TR2
 secret_access_key: 61SxYAOuwBAmX9SkZh2CStxo7MH1ODe8tRJdR+sH
