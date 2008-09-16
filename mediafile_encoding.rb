@@ -6,7 +6,7 @@
   require "#{File.dirname(__FILE__)}/mail"
 
 class MediafileEncoding
-  $settings = YAML::load(File.open(File.dirname(__FILE__) + '/mediafile_encoding_settings.yml'))  
+  $settings = YAML::load(File.open(File.dirname(__FILE__) + '/mediafile_encoding_settings.yml'))    
   $log = File.open($settings['log'],'a')
   
   def mysql_connect
@@ -48,9 +48,8 @@ class MediafileEncoding
   def fetch_records
     begin
       $log.write("Retrieving datas from Media File Table...\n\n")
-      @result =$dbh.query("SELECT * FROM mediafiles WHERE (is_encoded = 0 && is_uploaded = 1 && playerimage = 0 && encode_start_time is NULL) LIMIT 1")
-      result =  @result.fetch_row
-      puts result.inspect
+      @result =$dbh.query("SELECT * FROM mediafiles WHERE (is_encoded = 0 && is_image = 0 && encode_start_time is NULL) LIMIT 1") 
+      result =  @result.fetch_row      
       if @result.num_rows > 0         
         $dbh.query("update mediafiles set encode_start_time='#{Time.now.to_s(:db)}' where id= '#{result[0]}'")  
         @result.data_seek(0)
@@ -77,7 +76,7 @@ class MediafileEncoding
         begin
           $log.write("Download starts at  #{Time.now.to_s(:db)}...\n")
           $log.write("\nDownloading #{x['filename']} from s3...\n")          
-          #puts  "#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}"
+          #puts  "#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}"          
           system("#{$settings['curl_path']}/curl #{$settings['s3path']}/#{x['id']}/#{x['filename']} > #{temp_path}")
           if File.size(temp_path) == 0
             mail_error("Curl Download Error", "#{$settings['s3path']}/#{x['id']}/#{x['filename']}" )
