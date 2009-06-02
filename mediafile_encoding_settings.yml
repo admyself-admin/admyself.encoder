@@ -21,9 +21,11 @@
 --- 
 
 
-db_host: 70.87.222.99
+db_host: 70.85.16.158
+#db_host: localhost
 db_username: digital
-db_password: digital123
+#db_password: digital123
+db_password: d1g1tal
 db_name: digital_production
 db_port: 3306
 
@@ -42,5 +44,5 @@ flv_ini_file_path: c:\\Program Files\\Total Video Converter\\ini\\flv.ini
 tvc_path: c:/Program Files/Total Video Converter/tvc
 
 curl_path: c:/curl-7.18.0
-recipients: shivsingh@railsfactory.org , saravanankrishnan@railsfactory.org
+recipients: vadivelan@railsfactory.org , saravanankrishnan@railsfactory.org
 
