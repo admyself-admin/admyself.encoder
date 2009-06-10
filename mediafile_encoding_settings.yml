@@ -1,13 +1,7 @@
-#db_host  database server name 
-#db_username - database username
-#db_password  - database password
-#db_name  - database name 
-#db_port  - database port name 
-
-#access_key_id - Amazon s3 access key file id
 #secret_access_key - Amazon s3 secret access key
 #bucket_name - s3's Bucket Name 
 #s3server_url - amazon s3 server url
+#app_path - admyself app path
 #action_path - Exact url of available files
 
 #log - Logger info file path
@@ -20,25 +14,18 @@
 
 --- 
 
-
-db_host: 70.85.16.158
-#db_host: localhost
-db_username: digital
-#db_password: digital123
-db_password: d1g1tal
-db_name: digital_production
-db_port: 3306
-
-access_key_id: 1V2CH6DZ6FJMCTZ06TR2
-secret_access_key: 61SxYAOuwBAmX9SkZh2CStxo7MH1ODe8tRJdR+sH
 s3server_url: s3.amazonaws.com
 action_path: /digital-production/mediafiles
+app_path: http://admyself.railsfactory.com
+app_key: rw34#345$2
 
 s3path: http://s3.amazonaws.com/digital-production/mediafiles
 bucket_name: digital-production
 
 
 log: D:/Railsfactory/projects/encoder/log/encoding_log.txt
+#log: /home/railsfactory/projects/encoding/log/encoding_log.txt
+
 temp_file_path: D:\\Railsfactory\\projects\\encoder\\temp
 flv_ini_file_path: c:\\Program Files\\Total Video Converter\\ini\\flv.ini
 tvc_path: c:/Program Files/Total Video Converter/tvc
