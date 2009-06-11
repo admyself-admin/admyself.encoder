@@ -11,20 +11,24 @@ class MediafileEncoding
 	
 	def get_media_files
 		post_args = {       
-	     'key' => $settings['app_key']
+	     'encoding_app_key' => $settings['encoding_app_key']
     }
 		
     begin					
 		  response, data = Net::HTTP.post_form(URI.parse("#{$settings['app_path']}/mediafiles/get_media_files_for_encoding"), post_args)			
-			if data.include?('success')				
+			if data.include?('success')
 				result = eval(data)
 				encoding(result, Time.now.to_s(:db))
-			elsif data.include?('fail')								
-				$log.write("There is no mediafile available for encoding...\n\n")
+			elsif data =='fail'
+				$log.write("There is no mediafile available for encoding...\n")
+				return
+			elsif data == 'key_match_failed'
+				$log.write("encoding application key match failed.\n")
+				mail_error("Key Matching Failed", "Encoding app key doesn't match with the admyself server key. \n" )
 				return
 			else				
 				$log.write("Either the app url #{$settings['app_path']} is incorrect or the server is down...\n")
-				mail_error("Get media files Error", "Either the app url #{$settings['app_path']} is incorrect or the server is down..." )
+				mail_error("Get media files Error", "Either the app url #{$settings['app_path']} is incorrect or the server is down...\n" )
 				return
 			end			
 	  rescue		

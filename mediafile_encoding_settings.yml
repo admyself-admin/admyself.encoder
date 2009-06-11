@@ -16,8 +16,9 @@
 
 s3server_url: s3.amazonaws.com
 action_path: /digital-production/mediafiles
+
 app_path: http://admyself.railsfactory.com
-app_key: rw34#345$2
+encoding_app_key: 986978ff42278c4b93db7c9fbfa252f40f508fee
 
 s3path: http://s3.amazonaws.com/digital-production/mediafiles
 bucket_name: digital-production
