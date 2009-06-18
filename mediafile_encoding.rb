@@ -15,7 +15,7 @@ class MediafileEncoding
     }
 		
     begin					
-		  response, data = Net::HTTP.post_form(URI.parse("#{$settings['app_path']}/mediafiles/get_media_files_for_encoding"), post_args)			
+		  response, data = Net::HTTP.post_form(URI.parse("#{$settings['app_path']}/mediafiles/get_media_files_for_encoding"), post_args)			      
 			if data.include?('success')
 				result = eval(data)
 				encoding(result, Time.now.to_s(:db))
@@ -117,7 +117,7 @@ class MediafileEncoding
         Emailer.deliver_test_email(e.strip,error,reason)
       end
      rescue
-        $log.write("Error while sending mail: \n Error : #{error} \n Reason : #{reason}")
+        $log.write("Error while sending mail: \n Error : #{error} \n Reason : #{$!}")
       end
     end # def ends
   end
