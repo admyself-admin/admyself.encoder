@@ -1,7 +1,4 @@
   require "rubygems"
-  require 'aws/s3'
-  include AWS::S3
-  require 'mysql'
   require 'yaml'
   require "#{File.dirname(__FILE__)}/mail"
 
@@ -103,8 +100,7 @@ class MediafileEncoding
     } 
     begin					
 		  response, data = Net::HTTP.post_form(URI.parse("#{$settings['app_path']}/mediafiles/update_status_for_encoded_media_files"), post_args)						
-			$log.write("\n Status saved in database...\n")  if data.include?('success')				
-			
+			$log.write("\n Status saved in database...\n")  if data.include?('success')			
 	  rescue		
 		  $log.write("#{$!}")
 	  end

@@ -1,11 +1,9 @@
-#secret_access_key - Amazon s3 secret access key
-#bucket_name - s3's Bucket Name 
-#s3server_url - amazon s3 server url
-#app_path - admyself app path
-#action_path - Exact url of available files
+#app_path - Admyself Application server path
+#encoding_app_key - This key is matched with booking app key before it start the encoding. If it doesn't match then encoding script will not run
 
 #log - Logger info file path
-#temp_file_path - its a temp directory for the temporary convertion files are stored, before encode/upload to s3
+
+#temp_file_path - It is a temporary directory for the temporary convertion files are stored, before encode/upload to s3
 #tvc_path - total video converter executable path.  Its used to convert the downloaded files to flv
 #flv_ini_file_path - total video converter ini file path
 
@@ -13,9 +11,6 @@
 #recipients - Recipients mail address for Exception information
 
 --- 
-
-s3server_url: s3.amazonaws.com
-action_path: /digital-production/mediafiles
 
 app_path: http://admyself.railsfactory.com
 encoding_app_key: 986978ff42278c4b93db7c9fbfa252f40f508fee
@@ -28,8 +23,9 @@ log: D:/Railsfactory/projects/encoder/log/encoding_log.txt
 #log: /home/railsfactory/projects/encoding/log/encoding_log.txt
 
 temp_file_path: D:\\Railsfactory\\projects\\encoder\\temp
-flv_ini_file_path: c:\\Program Files\\Total Video Converter\\ini\\flv.ini
 tvc_path: c:/Program Files/Total Video Converter/tvc
+flv_ini_file_path: c:\\Program Files\\Total Video Converter\\ini\\flv.ini
+
 
 curl_path: c:/curl-7.18.0
 recipients: vadivelan@railsfactory.org , saravanankrishnan@railsfactory.org
