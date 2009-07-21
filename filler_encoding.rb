@@ -92,6 +92,7 @@ class MediafileEncoding
 	end
 	
 	def send_encode_update_status(filler_video, encode_start_time)
+    $log.write("\n Encoding status update send to booking..")
 		post_args = {       
 	     'key' => $settings['app_key'],
 			 'filler_video_id' => filler_video['id'],
