@@ -16,6 +16,7 @@ app_path: http://admyself.railsfactory.com
 encoding_app_key: 986978ff42278c4b93db7c9fbfa252f40f508fee
 
 s3path: http://s3.amazonaws.com/digital-production/mediafiles
+s3path_filler: http://s3.amazonaws.com/digital-production/filler_videos
 bucket_name: digital-production
 
 
